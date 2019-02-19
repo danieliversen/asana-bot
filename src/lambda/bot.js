@@ -16,7 +16,7 @@ function assignTask (task) {
     console.log('Task %d assigned', task.resource)
   }).catch(error => {
     console.log(error)
-    console.log('Task %d faild', task.resource)
+    console.log('Task %d failed', task.resource)
   })
 }
 
