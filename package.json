@@ -1,0 +1,22 @@
+{
+  "name": "asana-bot",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start:lambda": "netlify-lambda serve src/lambda",
+    "build:lambda": "netlify-lambda build src/lambda"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rubengarciam/asana-bot.git"
+  },
+  "author": "@rubengarciam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rubengarciam/asana-bot.git/issues"
+  },
+  "homepage": "https://github.com/rubengarciam/asana-bot#readme",
+  "dependencies": {
+    "netlify-lambda": "^1.4.2"
+  }
+}
