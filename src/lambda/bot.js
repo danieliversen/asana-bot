@@ -2,26 +2,31 @@ const axios = require('axios')
 const qs = require('querystring')
 const { TOKEN } = process.env
 
-// Assigns a task to a user
-function assignTask (task) {
-  let url = 'https://app.asana.com/api/1.0/tasks/' + task.resource
-  axios.put(url, qs.stringify({
-    assignee: 'me'
-  }), {
+// Updates contents of the new task
+function newTask (task) {
+  let update = {}
+  if (!task.assignee) {
+    update.assignee = 'me'
+  }
+  if (!task.due_on && !task.due_at) {
+    let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
+    update.due_on = dueDate.toISOString().slice(0, 10) // format YYY-MM-DD
+  }
+  let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
+  axios.put(url, qs.stringify(update), {
     headers: {
       'Authorization': TOKEN
     }
   }).then(res => {
-    console.log('Task %d assigned', task.resource)
+    console.log('Task %d updated', task.id)
   }).catch(error => {
-    console.log('Task %d failed', task.resource)
+    console.log('Task %d failed', task.id)
     console.log(error)
   })
 }
 
 // Iterates through events, looking for new tasks to assign
 exports.handler = function (event, context, callback) {
-  // console.log('Listening to events in %d', config.PROJECT)
   let body = JSON.parse(event.body)
   body.events.map((event) => {
     console.log(event)
@@ -33,8 +38,8 @@ exports.handler = function (event, context, callback) {
           'Authorization': TOKEN
         }
       }).then(res => {
-        let task = JSON.parse(event.body)
-        console.log(task)
+        let task = res.data.data
+        newTask(task)
       }).catch(error => {
         console.log('Retrieving task %d failed', event.resource)
         console.log(error)
