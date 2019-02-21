@@ -9,12 +9,10 @@ Add the following [Netlify's environment variables](https://www.netlify.com/docs
 - **TOKEN**: your personal Asana TOKEN (format _Bearer XXX_)
 - **PROJECT**: the Asana project this bot should be actively listening to events
 
-## Functions
+## Functionality
 
-- **Hello** - Dummy function to validate's bot availability
-- **Setup** - Code to configure [Asana's webhook](https://asana.com/developers/api-reference/webhooks)
-- **Assign** - Assigns all new tasks created that have no assignee to you.
-
+- Assigns a task to you (default user) if the task was created without an assignee
+- Assigns a default due date (2 weeks from creation date) if the task had not a due date or date-time
 
 ## References
 
