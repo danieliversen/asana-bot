@@ -34,16 +34,13 @@ function editedTask (task) {
     update.completed = true
   }
   if (task.completed && (task.memberships[0].section.name !== 'Done')) {
-    update.memberships = []
-    update.memberships.push(task.memberships[0].project)
-    update.memberships.push({
-      section: {
-        id: 1110079029864564,
-        gid: '1110079029864564',
-        name: 'Done',
-        resource_type: 'section'
-      }
-    })
+    update.memberships = task.memberships
+    update.memberships[0].section = {
+      id: 1110079029864564,
+      gid: '1110079029864564',
+      name: 'Done',
+      resource_type: 'section'
+    }
   }
   if (update === {}) {
     return
