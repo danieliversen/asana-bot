@@ -28,7 +28,7 @@ exports.handler = function (event, context, callback) {
     if ((event.type === 'task') && (event.action === 'added')) {
       // assignTask(event)
       let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
-      axios.get(url, null, {
+      axios.get(url, {
         headers: {
           'Authorization': TOKEN
         }
