@@ -1,9 +1,9 @@
 const axios = require('axios')
 const qs = require('querystring')
+const { TOKEN } = process.env
 
 // Assigns a task to a user
 function assignTask (task) {
-  const { TOKEN } = process.env
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.resource
   axios.put(url, qs.stringify({
     assignee: 'me'
@@ -26,7 +26,19 @@ exports.handler = function (event, context, callback) {
   body.events.map((event) => {
     console.log(event)
     if ((event.type === 'task') && (event.action === 'added')) {
-      assignTask(event)
+      // assignTask(event)
+      let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
+      axios.get(url, null, {
+        headers: {
+          'Authorization': TOKEN
+        }
+      }).then(res => {
+        let task = JSON.parse(event.body)
+        console.log(task)
+      }).catch(error => {
+        console.log('Retrieving task %d failed', event.resource)
+        console.log(error)
+      })
     }
   })
 
