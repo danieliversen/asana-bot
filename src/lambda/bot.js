@@ -21,7 +21,6 @@ function assignTask (task) {
 
 // Iterates through events, looking for new tasks to assign
 exports.handler = function (event, context, callback) {
-  // console.log('Listening to events in %d', config.PROJECT)
   let body = JSON.parse(event.body)
   body.events.map((event) => {
     console.log(event)
@@ -33,8 +32,9 @@ exports.handler = function (event, context, callback) {
           'Authorization': TOKEN
         }
       }).then(res => {
-        let task = JSON.parse(event.body)
-        console.log(task)
+        console.log(res)
+        let task = JSON.parse(res.body)
+        // console.log(task)
       }).catch(error => {
         console.log('Retrieving task %d failed', event.resource)
         console.log(error)
