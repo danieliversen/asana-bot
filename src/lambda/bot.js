@@ -32,9 +32,8 @@ exports.handler = function (event, context, callback) {
           'Authorization': TOKEN
         }
       }).then(res => {
-        console.log(res.data)
-        // let data = JSON.parse(res.data)
-        // console.log(data)
+        let task = res.data.data
+        console.log(task)
       }).catch(error => {
         console.log('Retrieving task %d failed', event.resource)
         console.log(error)
