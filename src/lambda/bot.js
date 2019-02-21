@@ -5,7 +5,6 @@ const qs = require('querystring')
 function assignTask (task) {
   const { TOKEN } = process.env
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.resource
-  console.log(url)
   axios.put(url, qs.stringify({
     assignee: 'me'
   }), {
@@ -15,8 +14,8 @@ function assignTask (task) {
   }).then(res => {
     console.log('Task %d assigned', task.resource)
   }).catch(error => {
-    console.log(error)
     console.log('Task %d failed', task.resource)
+    console.log(error)
   })
 }
 
@@ -24,8 +23,8 @@ function assignTask (task) {
 exports.handler = function (event, context, callback) {
   // console.log('Listening to events in %d', config.PROJECT)
   let body = JSON.parse(event.body)
-  // console.log(body.events)
   body.events.map((event) => {
+    console.log(event)
     if ((event.type === 'task') && (event.action === 'added')) {
       assignTask(event)
     }
