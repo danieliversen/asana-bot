@@ -2,17 +2,22 @@ const axios = require('axios')
 const qs = require('querystring')
 const { TOKEN } = process.env
 
-// Assigns a task to a user
-function assignTask (task) {
+// Updates contents of the new task
+function newTask (task) {
+  let update = {}
+  if (!task.assignee) {
+    update.assignee = 'me'
+  }
+  if (!task.due_on && !task.due_at) {
+    console.log('NO DUE DATE')
+  }
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
-  axios.put(url, qs.stringify({
-    assignee: 'me'
-  }), {
+  axios.put(url, qs.stringify(update), {
     headers: {
       'Authorization': TOKEN
     }
   }).then(res => {
-    console.log('Task %d assigned', task.id)
+    console.log('Task %d updated', task.id)
   }).catch(error => {
     console.log('Task %d failed', task.id)
     console.log(error)
@@ -33,12 +38,7 @@ exports.handler = function (event, context, callback) {
         }
       }).then(res => {
         let task = res.data.data
-        if (!task.assignee) {
-          assignTask(task)
-        }
-        if (!task.due_on) {
-          console.log('NO DUE DATE')
-        }
+        newTask(task)
       }).catch(error => {
         console.log('Retrieving task %d failed', event.resource)
         console.log(error)
