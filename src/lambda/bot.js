@@ -30,8 +30,8 @@ function newTask (task) {
 
 function editedTask (task) {
   let update = {}
-  console.log(task.membership['section'])
-  if (!task.completed && (task.membership['section'].name === 'Done')) {
+  console.log(task.memberships[0].section)
+  if (!task.completed && (task.memberships[0].section.name === 'Done')) {
     update.completed = true
   }
   if (update === {}) {
