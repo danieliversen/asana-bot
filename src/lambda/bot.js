@@ -33,8 +33,8 @@ exports.handler = function (event, context, callback) {
         }
       }).then(res => {
         console.log(res)
-        let task = JSON.parse(res.body)
-        // console.log(task)
+        let data = JSON.parse(res.data)
+        console.log(data)
       }).catch(error => {
         console.log('Retrieving task %d failed', event.resource)
         console.log(error)
