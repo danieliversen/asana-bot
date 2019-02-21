@@ -9,7 +9,8 @@ function newTask (task) {
     update.assignee = 'me'
   }
   if (!task.due_on && !task.due_at) {
-    console.log('NO DUE DATE')
+    let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
+    update.due_on = dueDate.toISOString().slice(0, 10) // format YYY-MM-DD
   }
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   axios.put(url, qs.stringify(update), {
