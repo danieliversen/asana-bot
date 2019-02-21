@@ -12,6 +12,31 @@ function newTask (task) {
     let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
     update.due_on = dueDate.toISOString().slice(0, 10) // format YYY-MM-DD
   }
+  if (update === {}) {
+    return
+  }
+  let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
+  axios.put(url, qs.stringify(update), {
+    headers: {
+      'Authorization': TOKEN
+    }
+  }).then(res => {
+    console.log('Task %d updated', task.id)
+  }).catch(error => {
+    console.log('Task %d failed', task.id)
+    console.log(error)
+  })
+}
+
+function editedTask (task) {
+  let update = {}
+  console.log(task.membership['section'])
+  if (!task.completed && (task.membership['section'].name === 'Done')) {
+    update.completed = true
+  }
+  if (update === {}) {
+    return
+  }
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   axios.put(url, qs.stringify(update), {
     headers: {
@@ -30,7 +55,7 @@ exports.handler = function (event, context, callback) {
   let body = JSON.parse(event.body)
   body.events.map((event) => {
     console.log(event)
-    if ((event.type === 'task') && (event.action === 'added')) {
+    if ((event.type === 'task') && ((event.action === 'added') || (event.action === 'changed'))) {
       // assignTask(event)
       let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
       axios.get(url, {
@@ -39,7 +64,11 @@ exports.handler = function (event, context, callback) {
         }
       }).then(res => {
         let task = res.data.data
-        newTask(task)
+        if (event.action === 'added') {
+          newTask(task)
+        } else {
+          editedTask(task)
+        }
       }).catch(error => {
         console.log('Retrieving task %d failed', event.resource)
         console.log(error)
