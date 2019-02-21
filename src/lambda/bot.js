@@ -34,13 +34,17 @@ function editedTask (task) {
     update.completed = true
   }
   if (task.completed && (task.memberships[0].section.name !== 'Done')) {
+    console.log("copying membership")
     update.memberships = task.memberships
+    console.log(update)
+    console.log("updating section")
     update.memberships[0].section = {
       id: 1110079029864564,
       gid: '1110079029864564',
       name: 'Done',
       resource_type: 'section'
     }
+    console.log(update)
   }
   if (update === {}) {
     return
