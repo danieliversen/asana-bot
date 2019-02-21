@@ -33,6 +33,7 @@ function editedTask (task) {
   if (!task.completed && (task.memberships[0].section.name === 'Done')) {
     update.completed = true
   }
+  console.log('needs NEW SECTION')
   if (task.completed && (task.memberships[0].section.name !== 'Done')) {
     console.log("copying membership")
     update.memberships = task.memberships
