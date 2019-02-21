@@ -4,7 +4,7 @@ const { TOKEN } = process.env
 
 // Assigns a task to a user
 function assignTask (task) {
-  let url = 'https://app.asana.com/api/1.0/tasks/' + task.resource
+  let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   axios.put(url, qs.stringify({
     assignee: 'me'
   }), {
@@ -12,9 +12,9 @@ function assignTask (task) {
       'Authorization': TOKEN
     }
   }).then(res => {
-    console.log('Task %d assigned', task.resource)
+    console.log('Task %d assigned', task.id)
   }).catch(error => {
-    console.log('Task %d failed', task.resource)
+    console.log('Task %d failed', task.id)
     console.log(error)
   })
 }
@@ -34,7 +34,7 @@ exports.handler = function (event, context, callback) {
       }).then(res => {
         let task = res.data.data
         if (!task.assignee) {
-          console.log('NO ASSIGNEE')
+          assignTask(task)
         }
         if (!task.due_on) {
           console.log('NO DUE DATE')
