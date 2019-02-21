@@ -30,9 +30,17 @@ function newTask (task) {
 
 function editedTask (task) {
   let update = {}
-  console.log(task.memberships[0].section)
   if (!task.completed && (task.memberships[0].section.name === 'Done')) {
     update.completed = true
+  }
+  if (task.completed && (task.memberships[0].section.name !== 'Done')) {
+    update.memberships = task.memberships
+    update.memberships[0].section = {
+      id: 1110079029864564,
+      gid: '1110079029864564',
+      name: 'Done',
+      resource_type: 'section'
+    }
   }
   if (update === {}) {
     return
