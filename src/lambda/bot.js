@@ -45,6 +45,7 @@ function editedTask (task) {
   if (update === {}) {
     return
   }
+  console.log(update)
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   axios.put(url, qs.stringify(update), {
     headers: {
