@@ -33,7 +33,12 @@ exports.handler = function (event, context, callback) {
         }
       }).then(res => {
         let task = res.data.data
-        console.log(task)
+        if (!task.assignee) {
+          console.log('NO ASSIGNEE')
+        }
+        if (!task.due_on) {
+          console.log('NO DUE DATE')
+        }
       }).catch(error => {
         console.log('Retrieving task %d failed', event.resource)
         console.log(error)
