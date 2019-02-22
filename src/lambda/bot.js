@@ -48,8 +48,7 @@ function completeTask (task) {
 function moveToSectionDone (task) {
   let update = {
     project: PROJECT,
-    section: SECTION_DONE,
-    insert_after: null
+    section: SECTION_DONE
   }
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id + '/addProject'
   axios.post(url, qs.stringify(update), {
@@ -57,7 +56,7 @@ function moveToSectionDone (task) {
       'Authorization': TOKEN
     }
   }).then(res => {
-    console.log('Task %d moved to Done', task.id)
+    console.log('Task %d completed', task.id)
   }).catch(error => {
     console.log('Task %d failed', task.id)
     console.log(error)
