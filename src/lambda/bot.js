@@ -1,6 +1,6 @@
 const axios = require('axios')
 const qs = require('querystring')
-const { TOKEN } = process.env
+const { TOKEN, PROJECT, SECTION_DONE } = process.env
 
 // Updates contents of the new task
 function newTask (task) {
@@ -28,40 +28,50 @@ function newTask (task) {
   })
 }
 
-function editedTask (task) {
-  let update = {}
-  if (!task.completed && (task.memberships[0].section.name === 'Done')) {
-    update.completed = true
+function completeTask (task) {
+  let update = {
+    completed: true
   }
-  console.log('needs NEW SECTION')
-  if (task.completed && (task.memberships[0].section.name !== 'Done')) {
-    console.log("copying membership")
-    update.memberships = task.memberships
-    console.log(update)
-    console.log("updating section")
-    update.memberships[0].section = {
-      id: 1110079029864564,
-      gid: '1110079029864564',
-      name: 'Done',
-      resource_type: 'section'
-    }
-    console.log(update)
-  }
-  if (update === {}) {
-    return
-  }
-  console.log(update)
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   axios.put(url, qs.stringify(update), {
     headers: {
       'Authorization': TOKEN
     }
   }).then(res => {
-    console.log('Task %d updated', task.id)
+    console.log('Task %d completed', task.id)
   }).catch(error => {
     console.log('Task %d failed', task.id)
     console.log(error)
   })
+}
+
+function moveToSectionDone (task) {
+  let update = {
+    project: PROJECT,
+    section: SECTION_DONE
+  }
+  let url = 'https://app.asana.com/api/1.0/tasks/' + task.id + '/addProject'
+  axios.post(url, qs.stringify(update), {
+    headers: {
+      'Authorization': TOKEN
+    }
+  }).then(res => {
+    console.log('Task %d completed', task.id)
+  }).catch(error => {
+    console.log('Task %d failed', task.id)
+    console.log(error)
+  })
+}
+
+function editedTask (task) {
+  if (!task.completed && (task.memberships[0].section.id === SECTION_DONE)) {
+    completeTask()
+    return
+  }
+
+  if (task.completed && (task.memberships[0].section.id !== SECTION_DONE)) {
+    moveToSectionDone(task)
+  }
 }
 
 // Iterates through events, looking for new tasks to assign
