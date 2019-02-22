@@ -48,7 +48,8 @@ function completeTask (task) {
 function moveToSectionDone (task) {
   let update = {
     project: PROJECT,
-    section: SECTION_DONE
+    section: SECTION_DONE,
+    insert_after: null
   }
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id + '/addProject'
   axios.post(url, qs.stringify(update), {
