@@ -48,7 +48,8 @@ function completeTask (task) {
 function moveToSectionDone (task) {
   let update = {
     project: PROJECT,
-    section: SECTION_DONE
+    section: SECTION_DONE,
+    insert_after: null
   }
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id + '/addProject'
   axios.post(url, qs.stringify(update), {
@@ -76,9 +77,22 @@ function editedTask (task) {
 
 // Iterates through events, looking for new tasks to assign
 exports.handler = function (event, context, callback) {
+  // Validate if this is Setup phase
+  let xHook = event.headers['x-hook-secret']
+  if (xHook != null) {
+    console.log("Hooking new webhook! ;)")
+    callback(null, {
+      statusCode: 200,
+      headers: {
+        'X-Hook-Secret': xHook
+      },
+      body: null
+    })
+    return
+  }
   let body = JSON.parse(event.body)
   body.events.map((event) => {
-    console.log(event)
+
     if ((event.type === 'task') && ((event.action === 'added') || (event.action === 'changed'))) {
       // assignTask(event)
       let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
