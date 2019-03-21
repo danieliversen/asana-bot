@@ -77,6 +77,18 @@ function editedTask (task) {
 
 // Iterates through events, looking for new tasks to assign
 exports.handler = function (event, context, callback) {
+  // Validate if this is Setup phase
+  let xHook = event.headers['x-hook-secret'] {
+  if xHook != null {
+    callback(null, {
+      statusCode: 200,
+      headers: {
+        'X-Hook-Secret': xHook
+      },
+      body: null
+    })
+    return
+  }
   let body = JSON.parse(event.body)
   body.events.map((event) => {
     console.log(event)
