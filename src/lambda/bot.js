@@ -79,7 +79,7 @@ function editedTask (task) {
 exports.handler = function (event, context, callback) {
   // Validate if this is Setup phase
   let xHook = event.headers['x-hook-secret']
-  if xHook != null {
+  if (xHook != null) {
     console.log("Hooking new webhook! ;)")
     callback(null, {
       statusCode: 200,
