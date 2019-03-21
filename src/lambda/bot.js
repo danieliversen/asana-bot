@@ -6,9 +6,7 @@ const { TOKEN, DEFAULT_USER, PROJECT, SECTION_DONE } = process.env
 function newTask (task) {
   let update = {}
   if (!task.assignee) {
-    update.assignee = {
-      assignee: DEFAULT_USER
-    }
+    update.assignee = DEFAULT_USER
   }
   if (!task.due_on && !task.due_at) {
     let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
