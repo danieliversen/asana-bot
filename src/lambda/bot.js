@@ -7,10 +7,7 @@ function newTask (task) {
   let update = {}
   if (!task.assignee) {
     update.assignee = {
-      id: parseInt(DEFAULT_USER),
-      gid: DEFAULT_USER,
-      resource_type: "user",
-      name: ''
+      assignee: DEFAULT_USER
     }
   }
   if (!task.due_on && !task.due_at) {
