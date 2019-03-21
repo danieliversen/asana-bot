@@ -1,12 +1,17 @@
 const axios = require('axios')
 const qs = require('querystring')
-const { TOKEN, PROJECT, SECTION_DONE } = process.env
+const { TOKEN, DEFAULT_USER, PROJECT, SECTION_DONE } = process.env
 
 // Updates contents of the new task
 function newTask (task) {
   let update = {}
   if (!task.assignee) {
-    update.assignee = 'me'
+    update.assignee = {
+      id: parseInt(DEFAULT_USER),
+      gid: DEFAULT_USER,
+      resource_type: "user",
+      name: ''
+    }
   }
   if (!task.due_on && !task.due_at) {
     let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
@@ -71,7 +76,7 @@ function editedTask (task) {
   }
 
   if (task.completed && (task.memberships[0].section.id !== SECTION_DONE)) {
-    moveToSectionDone(task)
+    // moveToSectionDone(task)
   }
 }
 
