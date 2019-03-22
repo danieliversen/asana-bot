@@ -1,11 +1,34 @@
 const axios = require('axios')
 const qs = require('querystring')
-// const { TOKEN, BOT_URL } = process.env
-
-const TOKEN = "Bearer 0/06e8c1a4a6c2d43c154f803035457efd"
-const BOT_URL = "https://asana-bot.netlify.com/.netlify/functions/bot"
+const { TOKEN, BOT_URL } = process.env
 
 exports.handler = function (event, context, callback) {
+  // Getting all subscribed projects
+  if (event.httpMethod == "GET"){
+      let url = "https://app.asana.com/api/1.0/webhooks?workspace="+event.queryStringParameters.workspace
+      axios.get(url, {
+        headers: {
+          'Authorization': TOKEN
+        }
+      }).then(res => {
+        let projects = ""
+        // console.log(res.data.data)
+        res.data.data.map(project => {
+          projects += project.resource.name + "  \n"
+        })
+        callback(null, {
+          statusCode: 200,
+          body: projects
+        })
+      }).catch(error => {
+        // console.log(error.response.data.errors)
+        callback(null, {
+          statusCode: 200,
+          body: 'Getting projects failed'
+        })
+      })
+      return
+  }
   // Adding a new webhook
   if (event.httpMethod == "POST"){
       console.log(event)
@@ -15,7 +38,7 @@ exports.handler = function (event, context, callback) {
       let content = {
         target: BOT_URL,
         resource: body.project
-  }
+      }
       axios.post(url, qs.stringify(content), {
         headers: {
           'Authorization': TOKEN
