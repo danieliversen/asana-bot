@@ -2,7 +2,7 @@ const axios = require('axios')
 const qs = require('querystring')
 const { TOKEN, DEFAULT_USER, PROJECT, SECTION_DONE } = process.env
 
-function getProjectOwner (project) {
+function getProjectOwner (project, callback) {
   let url = 'https://app.asana.com/api/1.0/projects/' + project
   console.log(url)
   let data = {
@@ -14,8 +14,7 @@ function getProjectOwner (project) {
     }
   }).then(res => {
     let project = res.data.data
-    console.log(project.owner)
-    return project.owner
+    callback(project.owner)
   }).catch(error => {
     console.log('Retrieving project %d failed', project)
     return null
@@ -23,29 +22,30 @@ function getProjectOwner (project) {
 }
 
 // Updates contents of the new task
-function newTask (task) {
+function isNewTask (task) {
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   let update = {}
-  if (!task.assignee) {
-    getProjectOwner(task.memberships[0].project.id)
-    update.assignee = DEFAULT_USER
-  }
-  if (!task.due_on && !task.due_at) {
-    let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
-    update.due_on = dueDate.toISOString().slice(0, 10) // format YYY-MM-DD
-  }
-  if (update === {}) {
-    return
-  }
-  axios.put(url, qs.stringify(update), {
-    headers: {
-      'Authorization': TOKEN
+  getProjectOwner(task.memberships[0].project.id, function(owner) {
+    if (!task.assignee) {
+      update.assignee = owner
     }
-  }).then(res => {
-    console.log('Task %d updated', task.id)
-  }).catch(error => {
-    console.log('Task %d failed', task.id)
-    console.log(error)
+    if (!task.due_on && !task.due_at) {
+      let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
+      update.due_on = dueDate.toISOString().slice(0, 10) // format YYY-MM-DD
+    }
+    if (update === {}) {
+      return
+    }
+    axios.put(url, qs.stringify(update), {
+      headers: {
+        'Authorization': TOKEN
+      }
+    }).then(res => {
+      console.log('Task %d updated', task.id)
+    }).catch(error => {
+      console.log('Task %d failed', task.id)
+      console.log(error)
+    })
   })
 }
 
@@ -116,7 +116,6 @@ exports.handler = function (event, context, callback) {
   }
   let body = JSON.parse(event.body)
   body.events.map((event) => {
-
     if ((event.type === 'task') && ((event.action === 'added') || (event.action === 'changed'))) {
       // assignTask(event)
       let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
@@ -127,7 +126,7 @@ exports.handler = function (event, context, callback) {
       }).then(res => {
         let task = res.data.data
         if (event.action === 'added') {
-          newTask(task)
+          isNewTask(task)
         } else {
           editedTask(task)
         }
