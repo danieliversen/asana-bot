@@ -4,7 +4,7 @@ const { TOKEN, DEFAULT_USER, PROJECT, SECTION_DONE } = process.env
 
 function getProjectOwner (project) {
   let url = 'https://app.asana.com/api/1.0/projects/' + project
-  print(url)
+  console.log(url)
   let data = {
     project: project
   }
