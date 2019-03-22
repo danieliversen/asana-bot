@@ -125,7 +125,6 @@ exports.handler = function (event, context, callback) {
   let body = JSON.parse(event.body)
   body.events.map((event) => {
     if ((event.type === 'task') && ((event.action === 'added') || (event.action === 'changed'))) {
-      // assignTask(event)
       let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
       axios.get(url, {
         headers: {
