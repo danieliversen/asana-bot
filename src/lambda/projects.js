@@ -11,10 +11,10 @@ exports.handler = function (event, context, callback) {
           'Authorization': TOKEN
         }
       }).then(res => {
-        let projects = ""
+        let webhooks = ""
         // console.log(res.data.data)
-        res.data.data.map(project => {
-          projects += project.resource.name + "  \n"
+        res.data.data.map(webhook => {
+          webhooks += webhook.resource.name + " - "+ webhook.id + "  \n"
         })
         callback(null, {
           statusCode: 200,
@@ -62,8 +62,7 @@ exports.handler = function (event, context, callback) {
       console.log(event.path)
       items = event.path.split('/')
       let project = items.pop()
-      console.log(project)
-
+      // console.log(project)
       let url = "https://app.asana.com/api/1.0/webhooks/"+project
       axios.delete(url, {
         headers: {
