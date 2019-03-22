@@ -99,47 +99,47 @@ function editedTask (task) {
 // Iterates through events, looking for new tasks to assign
 exports.handler = function (event, context, callback) {
 
-  console.log(event)
-
-  // Validate if this is Setup phase
-  let xHook = event.headers['x-hook-secret']
-  if (xHook != null) {
-    console.log("Hooking new webhook! ;)")
-    callback(null, {
-      statusCode: 200,
-      headers: {
-        'X-Hook-Secret': xHook
-      },
-      body: null
-    })
-    return
-  }
-  let body = JSON.parse(event.body)
-  body.events.map((event) => {
-    if ((event.type === 'task') && ((event.action === 'added') || (event.action === 'changed'))) {
-      // assignTask(event)
-      let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
-      axios.get(url, {
-        headers: {
-          'Authorization': TOKEN
-        }
-      }).then(res => {
-        let task = res.data.data
-        if (event.action === 'added') {
-          isNewTask(task)
-        } else {
-          editedTask(task)
-        }
-      }).catch(error => {
-        console.log('Retrieving task %d failed', event.resource)
-        console.log(error)
-      })
-    }
-  })
-
   // Release webhook
   callback(null, {
     statusCode: 200,
-    body: 'work done *beep*'
+    body: 'at work *beep*'
   })
+
+  console.log(event)
+
+  // // Validate if this is Setup phase
+  // let xHook = event.headers['x-hook-secret']
+  // if (xHook != null) {
+  //   console.log("Hooking new webhook! ;)")
+  //   callback(null, {
+  //     statusCode: 200,
+  //     headers: {
+  //       'X-Hook-Secret': xHook
+  //     },
+  //     body: null
+  //   })
+  //   return
+  // }
+  // let body = JSON.parse(event.body)
+  // body.events.map((event) => {
+  //   if ((event.type === 'task') && ((event.action === 'added') || (event.action === 'changed'))) {
+  //     // assignTask(event)
+  //     let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
+  //     axios.get(url, {
+  //       headers: {
+  //         'Authorization': TOKEN
+  //       }
+  //     }).then(res => {
+  //       let task = res.data.data
+  //       if (event.action === 'added') {
+  //         isNewTask(task)
+  //       } else {
+  //         editedTask(task)
+  //       }
+  //     }).catch(error => {
+  //       console.log('Retrieving task %d failed', event.resource)
+  //       console.log(error)
+  //     })
+  //   }
+  // })
 }
