@@ -12,13 +12,12 @@ exports.handler = function (event, context, callback) {
         }
       }).then(res => {
         let webhooks = ""
-        // console.log(res.data.data)
         res.data.data.map(webhook => {
           webhooks += webhook.resource.name + " - "+ webhook.id + "  \n"
         })
         callback(null, {
           statusCode: 200,
-          body: projects
+          body: webhooks
         })
       }).catch(error => {
         // console.log(error.response.data.errors)
