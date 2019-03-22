@@ -13,7 +13,7 @@ function getProjectOwner (project) {
       'Authorization': TOKEN
     }
   }).then(res => {
-    console.log(res)
+    console.log(res.data.data)
     let project = res.data.data
     return project.owner
   }).catch(error => {
@@ -27,7 +27,6 @@ function newTask (task) {
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   let update = {}
   if (!task.assignee) {
-    console.log("MEMBERSHIPS")
     getProjectOwner(task.memberships[0].project.id)
     update.assignee = DEFAULT_USER
   }
