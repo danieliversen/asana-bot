@@ -12,9 +12,9 @@ function getProjectOwner (project) {
       'Authorization': TOKEN
     }
   }).then(res => {
-    let body = JSON.parse(res.body)
-    print(body.data.owner)
-    return body.data.owner
+    let project = res.data.data
+    print(project)
+    return project.owner
   }).catch(error => {
     console.log('Retrieving project %d failed', project)
     return null
@@ -26,6 +26,7 @@ function newTask (task) {
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   let update = {}
   if (!task.assignee) {
+    getProjectOwner(task.memberships[0].id)
     update.assignee = DEFAULT_USER
   }
   if (!task.due_on && !task.due_at) {
