@@ -13,8 +13,8 @@ function getProjectOwner (project) {
       'Authorization': TOKEN
     }
   }).then(res => {
-    console.log(res.data.data)
     let project = res.data.data
+    console.log(project.owner)
     return project.owner
   }).catch(error => {
     console.log('Retrieving project %d failed', project)
