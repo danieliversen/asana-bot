@@ -7,7 +7,7 @@ function getProjectOwner (project) {
   let data = {
     project: project
   }
-  axios.get(url, qs.stringify(data), {
+  axios.get(url, {
     headers: {
       'Authorization': TOKEN
     }
