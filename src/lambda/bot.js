@@ -107,7 +107,7 @@ exports.handler = function (event, context, callback) {
     body: 'at work *beep*'
   })
 
-  // console.log(event)
+  console.log(event)
 
   // Validate if this is Setup phase
   let xHook = event.headers['x-hook-secret']
