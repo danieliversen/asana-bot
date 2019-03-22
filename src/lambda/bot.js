@@ -1,6 +1,6 @@
 const axios = require('axios')
 const qs = require('querystring')
-const { TOKEN, DEFAULT_USER, PROJECT, SECTION_DONE } = process.env
+const { TOKEN, PROJECT, SECTION_DONE } = process.env
 
 function getProjectOwner (project, callback) {
   let url = 'https://app.asana.com/api/1.0/projects/' + project
