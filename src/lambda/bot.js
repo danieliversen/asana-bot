@@ -26,7 +26,9 @@ function newTask (task) {
   let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   let update = {}
   if (!task.assignee) {
-    getProjectOwner(task.memberships[0].id)
+    console.log("MEMBERSHIPS")
+    console.log(task.memberships)
+    getProjectOwner(task.memberships[0].project.id)
     update.assignee = DEFAULT_USER
   }
   if (!task.due_on && !task.due_at) {
