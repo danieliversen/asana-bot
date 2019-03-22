@@ -1,5 +1,7 @@
 # 🤖 Asana Bot --- WIP
 
+_requres update_
+
 This is a custom bot that connects to your Asana via API web-hooks and performs specific actions on your tasks. It should be deployed in [Netlify](https://netlify.com)'s Lambda functions.
 
 [Request a new feature here](https://form.asana.com?hash=5df822d4a56d6e20a4c50ee2bc85f690708f11eb080301a64233c16f9d457e38&id=1111668747986179)
