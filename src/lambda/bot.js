@@ -2,8 +2,28 @@ const axios = require('axios')
 const qs = require('querystring')
 const { TOKEN, DEFAULT_USER, PROJECT, SECTION_DONE } = process.env
 
+function getProjectOwner (project) {
+  let url = 'https://app.asana.com/api/1.0/projects/' + project
+  let data = {
+    project: project
+  }
+  axios.get(url, qs.stringify(update), {
+    headers: {
+      'Authorization': TOKEN
+    }
+  }).then(res => {
+    let body = JSON.parse(res.body)
+    print(body.data.owner)
+    return body.data.owner
+  }).catch(error => {
+    console.log('Retrieving project %d failed', project)
+    return null
+  })
+}
+
 // Updates contents of the new task
 function newTask (task) {
+  let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   let update = {}
   if (!task.assignee) {
     update.assignee = DEFAULT_USER
@@ -15,7 +35,6 @@ function newTask (task) {
   if (update === {}) {
     return
   }
-  let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
   axios.put(url, qs.stringify(update), {
     headers: {
       'Authorization': TOKEN
@@ -77,6 +96,9 @@ function editedTask (task) {
 
 // Iterates through events, looking for new tasks to assign
 exports.handler = function (event, context, callback) {
+
+  console.log(event)
+
   // Validate if this is Setup phase
   let xHook = event.headers['x-hook-secret']
   if (xHook != null) {
