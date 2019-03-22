@@ -4,6 +4,7 @@ const { TOKEN, DEFAULT_USER, PROJECT, SECTION_DONE } = process.env
 
 function getProjectOwner (project) {
   let url = 'https://app.asana.com/api/1.0/projects/' + project
+  print(url)
   let data = {
     project: project
   }
@@ -12,8 +13,8 @@ function getProjectOwner (project) {
       'Authorization': TOKEN
     }
   }).then(res => {
+    print(res)
     let project = res.data.data
-    print(project)
     return project.owner
   }).catch(error => {
     console.log('Retrieving project %d failed', project)
@@ -27,7 +28,6 @@ function newTask (task) {
   let update = {}
   if (!task.assignee) {
     console.log("MEMBERSHIPS")
-    console.log(task.memberships)
     getProjectOwner(task.memberships[0].project.id)
     update.assignee = DEFAULT_USER
   }
