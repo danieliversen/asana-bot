@@ -1,30 +1,53 @@
 const axios = require('axios')
 const qs = require('querystring')
-const { TOKEN, PROJECT, SECTION_DONE } = process.env
+const { TOKEN, DEFAULT_USER, PROJECT, SECTION_DONE } = process.env
 
-// Updates contents of the new task
-function newTask (task) {
-  let update = {}
-  if (!task.assignee) {
-    update.assignee = 'me'
+function getProjectOwner (project, callback) {
+  let url = 'https://app.asana.com/api/1.0/projects/' + project
+  let data = {
+    project: project
   }
-  if (!task.due_on && !task.due_at) {
-    let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
-    update.due_on = dueDate.toISOString().slice(0, 10) // format YYY-MM-DD
-  }
-  if (update === {}) {
-    return
-  }
-  let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
-  axios.put(url, qs.stringify(update), {
+  axios.get(url, {
     headers: {
       'Authorization': TOKEN
     }
   }).then(res => {
-    console.log('Task %d updated', task.id)
+    let project = res.data.data
+    callback(project.owner)
   }).catch(error => {
-    console.log('Task %d failed', task.id)
-    console.log(error)
+    console.log('Retrieving project %d failed', project)
+    return null
+  })
+}
+
+// Updates contents of the new task
+function isNewTask (task) {
+  let url = 'https://app.asana.com/api/1.0/tasks/' + task.id
+  let update = {}
+  getProjectOwner(task.memberships[0].project.id, (owner) => {
+    if (!owner) {
+      throw "project has now owner"
+    }
+    if (!task.assignee) {
+      update.assignee = owner.id
+    }
+    if (!task.due_on && !task.due_at) {
+      let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
+      update.due_on = dueDate.toISOString().slice(0, 10) // format YYY-MM-DD
+    }
+    if (update === {}) {
+      return
+    }
+    axios.put(url, qs.stringify(update), {
+      headers: {
+        'Authorization': TOKEN
+      }
+    }).then(res => {
+      console.log('Task %d updated', task.id)
+    }).catch(error => {
+      console.log('Task %d failed', task.id)
+      console.log(error.response.data.errors)
+    })
   })
 }
 
@@ -41,7 +64,7 @@ function completeTask (task) {
     console.log('Task %d completed', task.id)
   }).catch(error => {
     console.log('Task %d failed', task.id)
-    console.log(error)
+    console.log(error.response.data.errors)
   })
 }
 
@@ -60,7 +83,7 @@ function moveToSectionDone (task) {
     console.log('Task %d completed', task.id)
   }).catch(error => {
     console.log('Task %d failed', task.id)
-    console.log(error)
+    console.log(error.response.data.errors)
   })
 }
 
@@ -71,12 +94,21 @@ function editedTask (task) {
   }
 
   if (task.completed && (task.memberships[0].section.id !== SECTION_DONE)) {
-    moveToSectionDone(task)
+    // moveToSectionDone(task)
   }
 }
 
 // Iterates through events, looking for new tasks to assign
 exports.handler = function (event, context, callback) {
+
+  // Release webhook
+  callback(null, {
+    statusCode: 200,
+    body: 'at work *beep*'
+  })
+
+  // console.log(event)
+
   // Validate if this is Setup phase
   let xHook = event.headers['x-hook-secret']
   if (xHook != null) {
@@ -92,7 +124,6 @@ exports.handler = function (event, context, callback) {
   }
   let body = JSON.parse(event.body)
   body.events.map((event) => {
-
     if ((event.type === 'task') && ((event.action === 'added') || (event.action === 'changed'))) {
       // assignTask(event)
       let url = 'https://app.asana.com/api/1.0/tasks/' + event.resource
@@ -103,20 +134,14 @@ exports.handler = function (event, context, callback) {
       }).then(res => {
         let task = res.data.data
         if (event.action === 'added') {
-          newTask(task)
+          isNewTask(task)
         } else {
           editedTask(task)
         }
       }).catch(error => {
         console.log('Retrieving task %d failed', event.resource)
-        console.log(error)
+        console.log(error.response.data.errors)
       })
     }
-  })
-
-  // Release webhook
-  callback(null, {
-    statusCode: 200,
-    body: 'work done *beep*'
   })
 }
