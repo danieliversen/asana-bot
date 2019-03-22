@@ -101,12 +101,6 @@ function editedTask (task) {
 // Iterates through events, looking for new tasks to assign
 exports.handler = function (event, context, callback) {
 
-  // Release webhook
-  callback(null, {
-    statusCode: 200,
-    body: 'at work *beep*'
-  })
-
   console.log(event)
 
   // Validate if this is Setup phase
@@ -122,6 +116,13 @@ exports.handler = function (event, context, callback) {
     })
     return
   }
+
+  // Release webhook
+  callback(null, {
+    statusCode: 200,
+    body: 'at work *beep*'
+  })
+
   let body = JSON.parse(event.body)
   body.events.map((event) => {
     if ((event.type === 'task') && ((event.action === 'added') || (event.action === 'changed'))) {
