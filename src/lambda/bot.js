@@ -29,9 +29,17 @@ function isNewTask (task) {
       throw "project has now owner"
     }
     if (!task.assignee) {
+      // Disable everything for now
+      return
+      // cool...
+      
       update.assignee = owner.id
     }
     if (!task.due_on && !task.due_at) {
+      // Disable everything for now
+      return
+      // cool...
+
       let dueDate = new Date(Date.now() + 12096e5) // two weeks from now
       update.due_on = dueDate.toISOString().slice(0, 10) // format YYY-MM-DD
     }
